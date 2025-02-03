@@ -1,111 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feedback</title>
-  <style>
-    /* Reset some default margins and paddings */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    /* Basic styling for the page */
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: transparent;
-      padding: 2rem;
-    }
-    /* Container to center and constrain content */
-    .container {
-      margin: 0 auto;
-      max-width: 800px;
-    }
-    /* Responsive logo container */
-    .logo-container {
-      width: 100%;
-      max-width: 300px;
-      margin: 0 auto 2rem;
-    }
-    .logo-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .feedback-text {
-      font-size: clamp(1.25rem, 3vw, 1.75rem);
-      color: #333;
-      font-weight: 500;
-      margin-bottom: 2rem;
-      line-height: 1.4;
-    }
-    .stars {
-      display: flex;
-      justify-content: center;
-      gap: clamp(1rem, 3vw, 2rem);
-      cursor: pointer;
-    }
-    .star {
-      font-size: clamp(3rem, 10vw, 5rem);
-      color: #ccc;
-      transition: color 0.3s ease, transform 0.2s ease;
-    }
-    .star:hover,
-    .star.selected {
-      color: gold;
-      transform: scale(1.2);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 2rem;
+            background: transparent;
+        }
+
+        .logo-container {
+            width: min(90%, 300px);
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+        }
+
+        .feedback-text {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+            max-width: 600px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: clamp(1rem, 3vw, 2rem);
+            cursor: pointer;
+        }
+
+        .star {
+            font-size: clamp(3rem, 10vw, 5rem);
+            color: #ccc;
+            transition: color 0.3s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+
+        .stars:hover .star {
+            pointer-events: auto;
+        }
+
+        .star:hover, .star.selected {
+            color: gold;
+            transform: scale(1.2);
+        }
+
+        @media (min-width: 768px) {
+            .logo-container { margin-bottom: 3rem; }
+            .feedback-text { font-size: 1.5rem; margin-bottom: 3rem; }
+            .star { font-size: 4rem; }
+        }
+
+        @media (min-width: 1024px) {
+            .feedback-text { font-size: 1.75rem; }
+            .star { font-size: 5rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
     <div class="logo-container">
-      <img src="https://res.cloudinary.com/ds7tapkba/image/upload/v1738581917/Asset_1_fovdz4.svg" alt="Sabine Hospitals Logo" />
+        <img src="https://res.cloudinary.com/ds7tapkba/image/upload/v1738581917/Asset_1_fovdz4.svg" alt="Sabine Hospitals Logo">
     </div>
-
+    
     <div class="feedback-text">
-      We’d love your feedback!<br />Share your thoughts here.
+        We would love to hear your thoughts<br>Share your feedback here.
     </div>
-
+    
     <div class="stars">
-      <span class="star" data-value="1">&#9733;</span>
-      <span class="star" data-value="2">&#9733;</span>
-      <span class="star" data-value="3">&#9733;</span>
-      <span class="star" data-value="4">&#9733;</span>
-      <span class="star" data-value="5">&#9733;</span>
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
     </div>
-  </div>
 
-  <script>
-    const stars = document.querySelectorAll(".star");
-    const lowRatingLink = "https://lowrating.com";
-    const highRatingLink = "https://highrating.com";
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const stars = document.querySelectorAll(".star");
+            const lowRatingLink = "https://forms.gle/agFBt9YDNyedYsjYA";
+            const highRatingLink = "https://g.page/r/CWzD2N88wKl4EAE/review";
 
-    stars.forEach((star) => {
-      star.addEventListener("mouseover", function () {
-        highlightStars(this.dataset.value);
-      });
+            stars.forEach((star, index) => {
+                star.addEventListener("mouseover", () => highlightStars(index + 1));
+                star.addEventListener("mouseleave", resetStars);
+                star.addEventListener("click", () => {
+                    const rating = index + 1;
+                    window.location.href = rating <= 3 ? lowRatingLink : highRatingLink;
+                });
+            });
 
-      star.addEventListener("mouseleave", resetStars);
+            function highlightStars(count) {
+                resetStars();
+                stars.forEach((star, index) => {
+                    if (index < count) star.classList.add("selected");
+                });
+            }
 
-      star.addEventListener("click", function () {
-        const rating = parseInt(this.dataset.value);
-        window.location.href = rating <= 3 ? lowRatingLink : highRatingLink;
-      });
-    });
-
-    function resetStars() {
-      stars.forEach((star) => star.classList.remove("selected"));
-    }
-
-    function highlightStars(count) {
-      resetStars();
-      stars.forEach((star, index) => {
-        if (index < count) star.classList.add("selected");
-      });
-    }
-  </script>
+            function resetStars() {
+                stars.forEach(star => star.classList.remove("selected"));
+            }
+        });
+    </script>
 </body>
 </html>
